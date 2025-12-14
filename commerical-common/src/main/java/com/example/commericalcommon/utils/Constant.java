@@ -29,6 +29,7 @@ public class Constant {
         public static final String USER_NO = "USR";
         public static final String PRODUCT_NO = "PRD";
         public static final String ORDER_NO = "ORD";
+        public static final String ATTACHMENT_NO = "ATT";
     }
 
     public static class Status {
@@ -54,6 +55,7 @@ public class Constant {
             public static final String POST = "POST";
             public static final String PRODUCT = "PRODUCT";
         }
+        public static final String ALGORITHM_HASH = "SHA-1";
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.postservice.configuration;
+package com.example.commericalcommon.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

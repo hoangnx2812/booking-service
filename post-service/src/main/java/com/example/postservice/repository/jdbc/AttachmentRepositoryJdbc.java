@@ -1,6 +1,7 @@
 package com.example.postservice.repository.jdbc;
 
 import com.example.commericalcommon.dto.object.AttachmentDTO;
+import com.example.commericalcommon.dto.object.AttachmentMapDTO;
 import com.example.commericalcommon.dto.response.AttachmentResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -71,16 +72,7 @@ public class AttachmentRepositoryJdbc {
         return attachments.isEmpty() ? null : attachments.getFirst();
     }
 
-    public void insertAttachmentMap(String code,
-                                    String displayName,
-                                    String objectType,
-                                    Long objectId,
-                                    String clientUploadCode,
-                                    String description,
-                                    Long createdBy,
-                                    String status,
-                                    Integer orderNo,
-                                    Long attachmentId) {
+    public void insertAttachmentMap(AttachmentMapDTO request) {
         String sql = """
                 INSERT INTO attachment_map (
                                 code,
@@ -107,20 +99,20 @@ public class AttachmentRepositoryJdbc {
                             )
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("code", code)
-                .addValue("displayName", displayName)
-                .addValue("objectType", objectType)
-                .addValue("objectId", objectId)
-                .addValue("clientUploadCode", clientUploadCode)
-                .addValue("description", description)
-                .addValue("createdBy", createdBy)
-                .addValue("status", status)
-                .addValue("orderNo", orderNo)
-                .addValue("attachmentId", attachmentId);
+                .addValue("code", request.getCode())
+                .addValue("displayName", request.getDisplayName())
+                .addValue("objectType", request.getObjectType())
+                .addValue("objectId", request.getObjectId())
+                .addValue("clientUploadCode", request.getClientUploadCode())
+                .addValue("description", request.getDescription())
+                .addValue("createdBy", request.getCreatedBy())
+                .addValue("status", request.getStatus())
+                .addValue("orderNo", request.getOrderNo())
+                .addValue("attachmentId", request.getAttachmentId());
         namedParameterJdbcTemplate.update(sql, params);
     }
 
-    public Long insert(AttachmentDTO dto) {
+    public Long insertAttachment(AttachmentDTO dto) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sql = """
                 INSERT INTO attachment (

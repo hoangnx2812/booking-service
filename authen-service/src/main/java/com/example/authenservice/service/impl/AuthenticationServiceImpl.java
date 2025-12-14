@@ -69,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public Object registerUser(RegisterUserRequest request) {
+    public void registerUser(RegisterUserRequest request) {
         String salt = generateSalt(null);
         UserAuth user = new UserAuth();
         user.setUserName(request.getUsername());
@@ -139,15 +139,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 throw new GlobalException(ErrorCode.INVALID_INPUT);
             }
         }
-        return "User registered successfully";
     }
-
 
     @Override
     public Object loginUser(LoginUserRequest request) {
-        UserAuth user = userAuthRepository
-                .findByUserName(request.getUsername())
-                .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_EXISTED));
+        UserAuth user = getUserAuthByUsername(request.getUsername());
 
         String hashedInputPassword = encryptSHA256(request.getPassword() + user.getUserSalt());
         boolean authenticated = user.getUserPwdHash().equals(hashedInputPassword);
@@ -196,7 +192,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     @PreAuthorize(AuthorityConstant.DefaultRole.ADMIN)
-    public Object deleteUser(IdRequest request) {
+    public void deleteUser(IdRequest request) {
         UserInfo userInfo = userInfoRepository.findByUserAuthId(request.getId())
                 .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_EXISTED));
         String keyCloakId = userInfo.getUserAuth().getKeycloakId();
@@ -212,7 +208,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 throw new GlobalException(ErrorCode.UNCATEGORIZED);
             }
         }
-        return "User deleted";
     }
 
     @Override
@@ -244,6 +239,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 });
     }
 
-
+    private UserAuth getUserAuthByUsername(String username) {
+        return userAuthRepository.findByUserName(username)
+                .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_EXISTED));
+    }
 }
 

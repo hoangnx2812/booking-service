@@ -1,9 +1,8 @@
 package com.example.commericalcommon.utils;
 
 public class PermissionConstant {
-    // ===============================
+    
     // AUTH
-    // ===============================
     public static class Auth {
         public static final String DELETE_ACCOUNT_INIT = "AUTH_DELETE_ACCOUNT_INIT";
         public static final String DELETE_ACCOUNT_CONFIRM = "AUTH_DELETE_ACCOUNT_CONFIRM";
@@ -12,17 +11,15 @@ public class PermissionConstant {
         public static final String REGISTER_BIOMETRIC = "AUTH_REGISTER_BIOMETRIC";
     }
 
-    // ===============================
+    
     // USER PROFILE
-    // ===============================
     public static class UserProfile {
         public static final String VIEW = "USER_PROFILE_VIEW";
         public static final String UPDATE = "USER_PROFILE_UPDATE";
     }
 
-    // ===============================
+    
     // POST
-    // ===============================
     public static class Post {
         public static final String LIST_VIEW = "POST_LIST_VIEW";
         public static final String DETAIL_VIEW = "POST_DETAIL_VIEW";
@@ -35,18 +32,16 @@ public class PermissionConstant {
         public static final String FAVORITE_LIST_VIEW = "POST_FAVORITE_LIST_VIEW";
     }
 
-    // ===============================
+    
     // MESSAGE
-    // ===============================
     public static class Message {
         public static final String HISTORY_VIEW = "MESSAGE_HISTORY_VIEW";
         public static final String MARK_ALL_READ = "MESSAGE_MARK_ALL_READ";
         public static final String SEND = "MESSAGE_SEND";
     }
 
-    // ===============================
+    
     // ARTIST
-    // ===============================
     public static class Artist {
         public static final String LIST_VIEW = "ARTIST_LIST_VIEW";
         public static final String PROFILE_VIEW = "ARTIST_PROFILE_VIEW";
@@ -74,26 +69,23 @@ public class PermissionConstant {
         public static final String PROFILE_UPDATE = "ARTIST_PROFILE_UPDATE";
     }
 
-    // ===============================
+    
     // BOOKING
-    // ===============================
     public static class Booking {
         public static final String USER_HISTORY_VIEW = "BOOKING_USER_HISTORY_VIEW";
         public static final String USER_CREATE = "BOOKING_USER_CREATE";
         public static final String ARTIST_LIST_VIEW = "BOOKING_ARTIST_LIST_VIEW";
     }
 
-    // ===============================
+    
     // NOTIFICATION
-    // ===============================
     public static class Notification {
         public static final String USER_HISTORY_VIEW = "NOTIFICATION_USER_HISTORY_VIEW";
         public static final String BOOKING_ARTIST_VIEW = "NOTIFICATION_BOOKING_ARTIST_VIEW";
     }
 
-    // ===============================
+    
     // ADMIN
-    // ===============================
     public static class Admin {
         public static final String REPORTED_POST_LIST_VIEW = "ADMIN_REPORTED_POST_LIST_VIEW";
         public static final String REPORTED_ARTIST_LIST_VIEW = "ADMIN_REPORTED_ARTIST_LIST_VIEW";

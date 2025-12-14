@@ -2,6 +2,7 @@ package com.example.authenservice.entity;
 
 import com.example.commericalcommon.utils.Constant;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,7 @@ public class UserAuth {
     @Column(name = "id", nullable = false)
     Long id;
 
-    @jakarta.validation.constraints.NotNull
+    @NotNull
     @Column(name = "user_name", nullable = false, length = Integer.MAX_VALUE)
     String userName;
 

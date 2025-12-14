@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserInfoResponse {
     Long id;
     String userNo;

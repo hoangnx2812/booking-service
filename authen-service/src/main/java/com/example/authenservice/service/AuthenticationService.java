@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 public interface AuthenticationService {
 
-    Object registerUser(RegisterUserRequest request);
+    void registerUser(RegisterUserRequest request);
 
     Object loginUser(LoginUserRequest request);
 
@@ -18,7 +18,7 @@ public interface AuthenticationService {
 
     Object getAllUserProfiles();
 
-    Object deleteUser(IdRequest request);
+    void deleteUser(IdRequest request);
 
     Mono<IntrospectResponse> introspectToken(IntrospectRequest request);
 

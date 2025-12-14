@@ -3,6 +3,7 @@ package com.example.postservice.repository.jdbc;
 import com.example.commericalcommon.dto.BaseResponse;
 import com.example.commericalcommon.dto.object.HashtagsDTO;
 import com.example.commericalcommon.dto.object.ServicesDTO;
+import com.example.commericalcommon.dto.request.GetUserInfoRequest;
 import com.example.commericalcommon.dto.response.user.UserInfoResponse;
 import com.example.commericalcommon.service.RedisService;
 import com.example.commericalcommon.utils.Constant;
@@ -94,18 +95,21 @@ public class PostsRepositoryJdbc {
         return namedParameterJdbcTemplate.query(sql.toString(), sqlParameterSource, (rs, rowNum) ->
         {
             Long id = rs.getLong("id");
-            long userId = rs.getLong("user_id");
+            long userInfoId = rs.getLong("user_id");
             UserInfoResponse userCache = redisService.hget(RedisConstant.Htable.USER_INFO,
-                    Long.toString(userId), UserInfoResponse.class);
+                    Long.toString(userInfoId), UserInfoResponse.class);
             if (userCache == null) {
-                BaseResponse<UserInfoResponse> userInfo = authenticationClient.getUserById(Long.toString(userId));
+                BaseResponse<UserInfoResponse> userInfo =
+                        authenticationClient.getUserByConditions(GetUserInfoRequest.builder()
+                                .userInfoId(userInfoId)
+                                .build());
                 log.info("Response from authentication-service: {}", userInfo);
                 if (!SUCCESS_CODE.equals(userInfo.getResultCode())) {
                     return null;
                 }
                 try {
                     redisService.hset(RedisConstant.Htable.USER_INFO,
-                            Long.toString(userId),
+                            Long.toString(userInfoId),
                             objectMapper.writeValueAsString(userInfo.getData()),
                             RedisConstant.Htable.TTL_DEFAULT);
                 } catch (JsonProcessingException e) {
@@ -115,7 +119,7 @@ public class PostsRepositoryJdbc {
             }
             return GetPostsResponse.builder()
                     .postId(id)
-                    .userId(userId)
+                    .userInfoId(userInfoId)
                     .userAvatar(userCache.getAvatar())
                     .userFullName(userCache.getFullName())
                     .postTitle(rs.getString("title"))

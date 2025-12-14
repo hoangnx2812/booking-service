@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
+import static com.example.commericalcommon.enums.MimeType.getExtensionByMime;
+
 @UtilityClass
 @Slf4j
 public class Util {
@@ -36,6 +38,12 @@ public class Util {
         String timePart = LocalDateTime.now().format(TIME_FORMAT);
         String randPart = generateSalt(4).toUpperCase();
         return prefix + timePart + randPart;
+    }
+
+    public static String generateObjectName(String name, String type) {
+        String timePart = LocalDateTime.now().format(TIME_FORMAT);
+        String extension = getExtensionByMime(type);
+        return name + "_" + timePart + extension;
     }
 
     public static String encryptSHA256(String input) {
@@ -80,6 +88,22 @@ public class Util {
             hexString.append(String.format("%02x", b));
         }
         return hexString.toString();
+    }
+
+    public static long getAttachmentSizeBase64(String base64) {
+        if (base64.contains(",")) {
+            base64 = base64.substring(base64.indexOf(",") + 1);
+        }
+
+        byte[] decodedBytes = Base64.getDecoder().decode(base64);
+        return decodedBytes.length;
+    }
+
+    public static String formatFileSize(long size) {
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int unitIndex = (int) (Math.log10(size) / Math.log10(1024));
+        double formattedSize = size / Math.pow(1024, unitIndex);
+        return String.format("%.2f %s", formattedSize, units[unitIndex]);
     }
 
     public static void main(String[] args) {

@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -63,11 +64,12 @@ public class HashtagRepositoryJdbc {
             sql += " and id = :id ";
             params.addValue("id", id);
         }
-        return namedParameterJdbcTemplate.queryForObject(sql, params, (rs, rowNum) ->
+        List<HashtagsDTO> hashtagsDTOS = namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) ->
                 HashtagsDTO.builder()
                         .id(rs.getLong("id"))
                         .name(rs.getString("hashtag"))
                         .build());
+        return CollectionUtils.isEmpty(hashtagsDTOS) ? null : hashtagsDTOS.getFirst();
     }
 
     public void insertHashtagMap(Long hashtagId, Long objectId, String objectType) {
