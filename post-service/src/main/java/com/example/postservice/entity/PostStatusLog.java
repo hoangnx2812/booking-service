@@ -29,7 +29,7 @@ public class PostStatusLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Posts posts;
+    private Post post;
 
     @Column(name = "updated_by_id")
     private Long updatedById;

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import static com.example.commericalcommon.utils.Util.getStackTrace;
@@ -92,7 +91,11 @@ public class MinioServiceImpl implements MinioService {
 
     @Override
     public String createObjectName(String fileName, String folderName) {
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        return folderName + "/" + today + "/" + fileName;
+        LocalDate today = LocalDate.now();
+        return folderName + "/"
+                + today.getYear() + "/"
+                + today.getMonthValue() + "/"
+                + today.getDayOfMonth() + "/"
+                + fileName;
     }
 }

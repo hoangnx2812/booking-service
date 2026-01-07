@@ -5,6 +5,7 @@ import com.example.commericalcommon.dto.object.HashtagsDTO;
 import com.example.commericalcommon.dto.object.ServicesDTO;
 import com.example.commericalcommon.dto.request.GetUserInfoRequest;
 import com.example.commericalcommon.dto.response.user.UserInfoResponse;
+import com.example.commericalcommon.enums.ObjectType;
 import com.example.commericalcommon.service.RedisService;
 import com.example.commericalcommon.utils.Constant;
 import com.example.commericalcommon.utils.DateTimeFormatter;
@@ -59,7 +60,7 @@ public class PostsRepositoryJdbc {
         if (StringUtils.hasText(keyword)) {
             List<HashtagsDTO> hashtags = hashtagRepositoryJdbc.getHashtagsByConditions(
                     null,
-                    Constant.Hashtag.ObjectType.POST,
+                    ObjectType.POST.getType(),
                     keyword);
 
             if (CollectionUtils.isEmpty(hashtags)) {
@@ -129,10 +130,9 @@ public class PostsRepositoryJdbc {
                             .stream().map(ServicesDTO::getName).toList())
                     .createdAt("Được đăng vào " +
                             dateTimeFormatter.format(isNotNull(rs.getTimestamp("created_at"))))
-                    .totalComments(String.valueOf(postCommentRepository.countByPosts_Id(id)))
-                    .totalLikes(String.valueOf(postLikeRepository.countByPosts_Id(id)))
-                    .attachments(attachmentRepositoryJdbc.getAllAttachments(id,
-                            Constant.Attachment.ObjectType.POST))
+                    .totalComments(String.valueOf(postCommentRepository.countByPost_Id(id)))
+                    .totalLikes(String.valueOf(postLikeRepository.countByPost_Id(id)))
+                    .attachments(attachmentRepositoryJdbc.getAllAttachments(id, ObjectType.POST.getType()))
                     .build();
         });
     }

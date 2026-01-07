@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "posts")
-public class Posts {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -30,8 +30,8 @@ public class Posts {
     @Column(name = "title", length = Integer.MAX_VALUE)
     private String title;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_info_id")
+    private Long userInfoId;
 
     @Column(name = "store_id")
     private Long storeId;
@@ -84,6 +84,14 @@ public class Posts {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        isActive = Boolean.TRUE;
+        enableSubTitleAdv = Boolean.FALSE;
+        priority = 1;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
 }

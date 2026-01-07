@@ -1,11 +1,13 @@
 package com.example.postservice.service;
 
 import com.example.commericalcommon.dto.response.HashtagResponse;
+import com.example.commericalcommon.dto.response.user.UserInfoResponse;
+import com.example.commericalcommon.enums.ObjectType;
 
 import java.util.List;
 
 public interface HashtagService {
     List<HashtagResponse> getHashtagsByCondition(Object request);
 
-    void addHashtags(String hashtag, String objectType, Long objectId);
+    void insertHashtags(List<String> hashtag, ObjectType objectType, Long objectId, UserInfoResponse userInfo);
 }

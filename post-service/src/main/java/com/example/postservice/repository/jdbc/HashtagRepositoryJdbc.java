@@ -1,6 +1,7 @@
 package com.example.postservice.repository.jdbc;
 
 import com.example.commericalcommon.dto.object.HashtagsDTO;
+import com.example.commericalcommon.enums.ObjectType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -72,17 +73,52 @@ public class HashtagRepositoryJdbc {
         return CollectionUtils.isEmpty(hashtagsDTOS) ? null : hashtagsDTOS.getFirst();
     }
 
-    public void insertHashtagMap(Long hashtagId, Long objectId, String objectType) {
+    public List<HashtagsDTO> getHashTagByName(List<String> name) {
         String sql = """
-                insert into hashtags_map (hashtag_id, object_id, object_type, hashtag_id)
-                values (:hashtag_id, :object_id, :object_type, :hashtag_id)
+                select * from hashtags where 1 = 1 and hashtag in (:hashtag)
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("hashtag", name);
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) ->
+                HashtagsDTO.builder()
+                        .id(rs.getLong("id"))
+                        .name(rs.getString("hashtag"))
+                        .build());
+    }
+
+    public void insertHashtagMap(Long hashtagId, Long objectId, ObjectType objectType) {
+        String sql = """
+                insert into hashtags_map (hashtag_id, object_id, object_type, hashtags_type)
+                values (:hashtag_id, :object_id, :object_type, :hashtags_type)
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("hashtag_id", hashtagId);
         params.addValue("object_id", objectId);
-        params.addValue("object_type", objectType);
-        params.addValue("hashtag_id", hashtagId);
+        params.addValue("object_type", objectType.getType());
+        params.addValue("hashtags_type", objectType.getType());
         namedParameterJdbcTemplate.update(sql, params);
+    }
+
+    public void insertHashtagMap(List<Long> hashtagId, Long objectId, ObjectType objectType) {
+        StringBuilder sql = new StringBuilder("""
+                insert into hashtags_map (hashtag_id, object_id, object_type, hashtags_type)
+                values
+                """);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        for (int i = 0; i < hashtagId.size(); i++) {
+            sql.append(" (:hashtag_id").append(i)
+                    .append(", :object_id").append(i)
+                    .append(", :object_type").append(i)
+                    .append(", :hashtags_type").append(i).append(") ");
+            if (i < hashtagId.size() - 1) {
+                sql.append(", ");
+            }
+            params.addValue("hashtag_id" + i, hashtagId.get(i));
+            params.addValue("object_id" + i, objectId);
+            params.addValue("object_type" + i, objectType.getType());
+            params.addValue("hashtags_type" + i, objectType.getType());
+        }
+        namedParameterJdbcTemplate.update(sql.toString(), params);
     }
 
     public Long insertHashtag(String name) {

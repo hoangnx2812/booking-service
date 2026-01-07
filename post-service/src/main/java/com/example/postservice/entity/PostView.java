@@ -20,7 +20,7 @@ public class PostView {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Posts posts;
+    private Post post;
 
     @Column(name = "user_id")
     private Long userId;

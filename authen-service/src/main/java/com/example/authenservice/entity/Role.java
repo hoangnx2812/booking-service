@@ -1,6 +1,6 @@
 package com.example.authenservice.entity;
 
-import com.example.commericalcommon.utils.Constant;
+import com.example.commericalcommon.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -45,6 +45,6 @@ public class Role {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        status = Constant.Status.ACTIVE;
+        status = Status.ACTIVE.getStatus();
     }
 }

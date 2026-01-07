@@ -1,9 +1,9 @@
 package com.example.postservice.repository;
 
-import com.example.postservice.entity.Posts;
+import com.example.postservice.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostsRepository extends JpaRepository<Posts, Long> {
+public interface PostsRepository extends JpaRepository<Post, Long> {
 }

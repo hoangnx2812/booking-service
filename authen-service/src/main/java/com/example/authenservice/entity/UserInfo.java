@@ -1,5 +1,6 @@
 package com.example.authenservice.entity;
 
+import com.example.commericalcommon.enums.Status;
 import com.example.commericalcommon.utils.Constant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -137,13 +138,13 @@ public class UserInfo {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        status = Constant.Status.ACTIVE;
+        status = Status.ACTIVE.getStatus();
         enableNotification = Boolean.TRUE;
         enableEmailNotification = Boolean.FALSE;
         enableSms = Boolean.FALSE;
         enablePromotionsNotification = Boolean.TRUE;
         enablePromotionsEmailNotification = Boolean.TRUE;
-        language =  Constant.Language.VIETNAMESE;
+        language = Constant.Language.VIETNAMESE;
     }
 
     @PreUpdate

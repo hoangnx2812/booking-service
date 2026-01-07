@@ -76,6 +76,7 @@ public class UserServiceImpl implements UserService {
                 log.error("Error while caching user info to Redis", e);
             }
             userCache = UserInfoResponse.builder()
+                    .id(userInfo.getId())
                     .userNo(userInfo.getUserNo())
                     .fullName(userInfo.getFullName())
                     .email(userInfo.getEmail())

@@ -1,23 +1,18 @@
 package com.example.postservice.service.impl;
 
-import com.example.commericalcommon.dto.BaseResponse;
-import com.example.commericalcommon.dto.request.GetUserInfoRequest;
+import com.example.commericalcommon.dto.object.HashtagsDTO;
 import com.example.commericalcommon.dto.response.HashtagResponse;
 import com.example.commericalcommon.dto.response.user.UserInfoResponse;
-import com.example.commericalcommon.service.RedisService;
-import com.example.postservice.repository.httpclient.AuthenticationClient;
+import com.example.commericalcommon.enums.ObjectType;
 import com.example.postservice.repository.jdbc.HashtagRepositoryJdbc;
 import com.example.postservice.service.HashtagService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-
-import static com.example.commericalcommon.utils.Constant.SUCCESS_CODE;
 
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
@@ -25,9 +20,6 @@ import static com.example.commericalcommon.utils.Constant.SUCCESS_CODE;
 @Slf4j
 public class HashtagServiceImpl implements HashtagService {
     HashtagRepositoryJdbc hashtagRepositoryJdbc;
-    RedisService redisService;
-    ObjectMapper objectMapper;
-    AuthenticationClient authenticationClient;
 
     @Override
     public List<HashtagResponse> getHashtagsByCondition(Object request) {
@@ -35,15 +27,25 @@ public class HashtagServiceImpl implements HashtagService {
     }
 
     @Override
-    public void addHashtags(String hashtag, String objectType, Long objectId) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        BaseResponse<UserInfoResponse> userInfo =
-                authenticationClient.getUserByConditions(GetUserInfoRequest.builder()
-                        .userName(userName)
-                        .build());
-        log.info("Response from authentication-service: {}", userInfo);
-        if (!SUCCESS_CODE.equals(userInfo.getResultCode())) {
-            return;
+    public void insertHashtags(List<String> hashtag, ObjectType objectType, Long objectId, UserInfoResponse userInfo) {
+        List<HashtagsDTO> hashTagExists = hashtagRepositoryJdbc.getHashTagByName(hashtag);
+        List<String> hashTagNotExists = hashtag.stream()
+                .filter(name ->
+                        hashTagExists.stream().noneMatch(ht -> ht.getName().equalsIgnoreCase(name)))
+                .toList();
+        if (!CollectionUtils.isEmpty(hashTagExists)) {
+            int batchSize = 100;
+            for (int i = 0; i < hashTagExists.size(); i += batchSize) {
+                int end = Math.min(i + batchSize, hashTagExists.size());
+                List<HashtagsDTO> batch = hashTagExists.subList(i, end);
+                hashtagRepositoryJdbc.insertHashtagMap(batch.stream().map(HashtagsDTO::getId).toList(), objectId, objectType);
+            }
+        }
+        if (!CollectionUtils.isEmpty(hashTagNotExists)) {
+            hashTagNotExists.forEach(name -> {
+                Long hashtagId = hashtagRepositoryJdbc.insertHashtag(name);
+                hashtagRepositoryJdbc.insertHashtagMap(hashtagId, objectId, objectType);
+            });
         }
     }
 }

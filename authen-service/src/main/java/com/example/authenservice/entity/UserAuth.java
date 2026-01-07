@@ -1,6 +1,6 @@
 package com.example.authenservice.entity;
 
-import com.example.commericalcommon.utils.Constant;
+import com.example.commericalcommon.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -62,7 +62,7 @@ public class UserAuth {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        status = Constant.Status.ACTIVE;
+        status = Status.ACTIVE.getStatus();
     }
 
 }

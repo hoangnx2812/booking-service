@@ -54,22 +54,22 @@ public class AttachmentRepositoryJdbc {
                         .build());
     }
 
-    public AttachmentDTO checkSumExists(String checkSum) {
+    public List<AttachmentDTO> checkSumExists(List<String> checkSum) {
         String sql = """
-                select id, file_name
+                select id, file_name, checksum
                 from attachment
-                where checksum = :checksum
+                where checksum in (:checksum)
                 and status = 'A'
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("checksum", checkSum);
-        List<AttachmentDTO> attachments = namedParameterJdbcTemplate.query(sql, params,
+        return namedParameterJdbcTemplate.query(sql, params,
                 (rs, rowNum) ->
                         AttachmentDTO.builder()
                                 .id(rs.getLong("id"))
                                 .fileName(rs.getString("name"))
+                                .checksum(rs.getString("checksum"))
                                 .build());
-        return attachments.isEmpty() ? null : attachments.getFirst();
     }
 
     public void insertAttachmentMap(AttachmentMapDTO request) {
