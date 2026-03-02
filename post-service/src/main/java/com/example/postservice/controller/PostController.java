@@ -17,16 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostController {
     PostService postService;
     MessageUtil messageUtil;
 
-    @PostMapping(value = "/by-conditions",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/by-conditions")
     public BaseResponse<Object> getPostsByConditions(
             @Valid @RequestBody BaseRequest<GetPostRequest> baseRequest) {
         long startTime = System.currentTimeMillis();
@@ -39,9 +37,7 @@ public class PostController {
                 .build();
     }
 
-    @PostMapping(value = "/insert",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/insert")
     public BaseResponse<Void> insertPost(
             @Valid @RequestBody BaseRequest<InsertPostRequest> baseRequest) {
         long startTime = System.currentTimeMillis();

@@ -47,6 +47,21 @@ public class GlobalExceptionHandler {
                         Objects.requireNonNull(exception.getFieldError()).getDefaultMessage()));
     }
 
+//    @ExceptionHandler(value = NoResourceFoundException.class)
+//    ResponseEntity<BaseResponse<Object>> handleNoResourceFoundException(NoResourceFoundException exception) {
+//        return ResponseEntity
+//                .badRequest()
+//                .body(setBaseResponse(ErrorCode.RESOURCE_NOT_FOUND.getCode(),
+//                        ErrorCode.RESOURCE_NOT_FOUND.getMessage()));
+//    }
+//
+//    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+//    public ResponseEntity<BaseResponse<Object>> handleHttpRequestMethodNotSupportedException() {
+//        return ResponseEntity
+//                .badRequest()
+//                .body(setBaseResponse(ErrorCode.METHOD_NOT_ALLOWED.getCode(),
+//                        ErrorCode.METHOD_NOT_ALLOWED.getMessage()));
+//    }
 
     private BaseResponse<Object> setBaseResponse(String errorCode, String message) {
         return BaseResponse.builder()

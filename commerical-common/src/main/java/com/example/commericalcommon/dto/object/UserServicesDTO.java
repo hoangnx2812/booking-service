@@ -9,11 +9,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ServicesDTO {
-    Long id;
+public class UserServicesDTO {
+    Long userServiceId;
+    Long userServiceMapId;
     String name;
     Double price;
     Long userId;
     Long storeId;
     String time;
+    String objectType;
+    Long objectId;
 }

@@ -1,9 +1,9 @@
 package com.example.postservice.service;
 
-public interface PostLikeService {
-    Object addPostLike(Object postLike);
+import com.example.postservice.dto.request.LikeActionRequest;
 
-    Object deletePostLike(Object postLike);
+public interface PostLikeService {
+    void likeActionPost(LikeActionRequest request);
 
     Object getPostLikeByConditions(Object postLike);
 }

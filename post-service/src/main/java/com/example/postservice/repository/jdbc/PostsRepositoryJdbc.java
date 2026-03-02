@@ -2,12 +2,12 @@ package com.example.postservice.repository.jdbc;
 
 import com.example.commericalcommon.dto.BaseResponse;
 import com.example.commericalcommon.dto.object.HashtagsDTO;
-import com.example.commericalcommon.dto.object.ServicesDTO;
+import com.example.commericalcommon.dto.object.UserServicesDTO;
 import com.example.commericalcommon.dto.request.GetUserInfoRequest;
+import com.example.commericalcommon.dto.request.GetUserServiceRequest;
 import com.example.commericalcommon.dto.response.user.UserInfoResponse;
 import com.example.commericalcommon.enums.ObjectType;
 import com.example.commericalcommon.service.RedisService;
-import com.example.commericalcommon.utils.Constant;
 import com.example.commericalcommon.utils.DateTimeFormatter;
 import com.example.commericalcommon.utils.RedisConstant;
 import com.example.postservice.dto.request.GetPostRequest;
@@ -15,6 +15,7 @@ import com.example.postservice.dto.response.GetPostsResponse;
 import com.example.postservice.repository.PostCommentRepository;
 import com.example.postservice.repository.PostLikeRepository;
 import com.example.postservice.repository.httpclient.AuthenticationClient;
+import com.example.postservice.repository.httpclient.CustomerClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -38,7 +39,7 @@ import static com.example.commericalcommon.utils.Util.isNotNull;
 @Slf4j
 public class PostsRepositoryJdbc {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    ServicesRepositoryJdbc servicesRepositoryJdbc;
+    CustomerClient customerClient;
     HashtagRepositoryJdbc hashtagRepositoryJdbc;
     PostCommentRepository postCommentRepository;
     PostLikeRepository postLikeRepository;
@@ -50,7 +51,7 @@ public class PostsRepositoryJdbc {
 
     public List<GetPostsResponse> getPostsByConditions(GetPostRequest request, int offset) {
         StringBuilder sql = new StringBuilder("""
-                select p.id, p.title, p.services_ids, p.created_at, p.user_id
+                select p.id, p.title, p.services_ids, p.created_at, p.user_info_id
                 from posts p
                 where 1 = 1
                 and p.is_active = true
@@ -76,17 +77,17 @@ public class PostsRepositoryJdbc {
             sqlParameterSource.addValue("keyword", keyword);
         }
         if (request.getPriceFrom() != null && request.getPriceTo() != null) {
-            List<ServicesDTO> services = servicesRepositoryJdbc.getServicesByConditions(
-                    null,
-                    request.getPriceFrom(),
-                    request.getPriceTo(),
-                    null,
-                    null);
+            List<UserServicesDTO> services = customerClient.getUserByConditions(
+                            GetUserServiceRequest.builder()
+                                    .priceFrom(request.getPriceFrom())
+                                    .priceTo(request.getPriceTo())
+                                    .build())
+                    .getData();
             if (!CollectionUtils.isEmpty(services)) {
                 sql.append("""
-                        and services_ids in (:service_ids)
+                        p.id in (:post_ids)
                         """);
-                sqlParameterSource.addValue("service_ids", services.stream().map(ServicesDTO::getId).toList());
+                sqlParameterSource.addValue("post_ids", services.stream().map(UserServicesDTO::getObjectId).toList());
             }
         }
         sql.append(" order by p.created_at desc ");
@@ -124,10 +125,11 @@ public class PostsRepositoryJdbc {
                     .userAvatar(userCache.getAvatar())
                     .userFullName(userCache.getFullName())
                     .postTitle(rs.getString("title"))
-                    .serviceName(servicesRepositoryJdbc.getServicesByConditions(null, null,
-                                    null, null,
-                                    List.of(rs.getLong("services_ids")))
-                            .stream().map(ServicesDTO::getName).toList())
+                    .serviceName(customerClient.getUserByConditions(GetUserServiceRequest.builder()
+                                    .objectId(Long.toString(id))
+                                    .objectType(ObjectType.POST.getType())
+                                    .build()).getData()
+                            .stream().map(UserServicesDTO::getName).toList())
                     .createdAt("Được đăng vào " +
                             dateTimeFormatter.format(isNotNull(rs.getTimestamp("created_at"))))
                     .totalComments(String.valueOf(postCommentRepository.countByPost_Id(id)))

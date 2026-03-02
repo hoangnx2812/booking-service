@@ -1,17 +1,19 @@
 package com.example.postservice.repository.httpclient;
 
 import com.example.commericalcommon.dto.BaseResponse;
-import com.example.commericalcommon.dto.request.GetUserInfoRequest;
-import com.example.commericalcommon.dto.response.user.UserInfoResponse;
+import com.example.commericalcommon.dto.object.UserServicesDTO;
+import com.example.commericalcommon.dto.request.GetUserServiceRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "authentication-service", url = "${app.services.authentication.url}")
-public interface AuthenticationClient {
-    @PostMapping(value = "/internal/users/by-conditions",
+import java.util.List;
+
+@FeignClient(name = "customer-service", url = "${app.services.customer.url}")
+public interface CustomerClient {
+    @PostMapping(value = "/internal/get-user-services",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    BaseResponse<UserInfoResponse> getUserByConditions(@RequestBody GetUserInfoRequest request);
+    BaseResponse<List<UserServicesDTO>> getUserByConditions(@RequestBody GetUserServiceRequest request);
 }
